@@ -33,6 +33,11 @@ func main() {
 	}
 	db.AutoMigrate(&models.Master{}, &models.Credential{})
 
+	// check if encryption keys are generated
+	if !models.CheckEncryptionKeysExist(db) {
+		models.GenerateEncryptionKeys(db)
+	}
+
 	// get args
 	args := os.Args[1:]
 
@@ -46,6 +51,16 @@ func main() {
 
 	case "login":
 		app.Login(db)
+
+	case "add":
+		if len(args) < 2 {
+			fmt.Println("Please specify a service.")
+		} else {
+			app.Add(args[1], db)
+		}
+	
+	case "list":
+		app.List(db)
 	
 	default:
 		fmt.Printf("'%s' is an unrecognised command. See 'go-pwm help' for a list of commands.", args[0])

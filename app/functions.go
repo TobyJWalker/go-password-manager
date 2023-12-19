@@ -33,11 +33,11 @@ Commands:
   help           : display help message
   configure      : setup master password
   login          : login to go-pwm
-  add [service]  : add credentials for new service
+  add [label]  : add credentials for new service
   list           : list all services
-  get [service]  : get credentials for the service
-  edit [service] : edit credentials for a service
-  rm [service]   : remove a service
+  get [label]  : get credentials for the service
+  edit [label] : edit credentials for a service
+  rm [label]   : remove a service
     `)
 }
 
@@ -99,5 +99,34 @@ func Login(db *gorm.DB) {
 		models.UpdateLoginTime(db) // update the login time
 	} else {
 		fmt.Println("Incorrect password.")
+	}
+}
+
+func Add(service string, db *gorm.DB) {
+	// check if logged in
+	if !models.CheckSessionValid(db) {
+		fmt.Println("Please login before adding credentials.")
+		os.Exit(0)
+	}
+
+	// get username
+	fmt.Print("Enter username: ")
+	io.Scan()
+	username := io.Text()
+
+	// get password
+	fmt.Print("Enter password: ")
+	io.Scan()
+	password := io.Text()
+
+	// save credentials
+	models.SaveCredentials(service, username, password, db)
+}
+
+// list all services available
+func List(db *gorm.DB) {
+	services := models.GetServices(db)
+	for i, service := range services {
+		fmt.Printf("%d. %s\n", i+1, service)
 	}
 }
