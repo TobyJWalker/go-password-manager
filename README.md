@@ -11,10 +11,10 @@ Passwords are hashed for security, and its usage is locked behind a master passw
 - [x] Create an password for the app
 - [x] Verify your identity with the password
 - [x] Session expiration after 5 minutes
-- [ ] Add a new login entry
-- [ ] List all login entries
-- [ ] Edit login entry
-- [ ] Delete login entry
+- [x] Add a new login entry
+- [x] List all login entries
+- [x] Edit login entry
+- [x] Delete login entry
 - [x] Encrypted storage
 
 # Installation
