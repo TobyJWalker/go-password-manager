@@ -153,6 +153,12 @@ func Remove(service string, db *gorm.DB) {
 		os.Exit(0)
 	}
 
+	// check service exists
+	if !models.CheckServiceExists(service, db) {
+		fmt.Println("Service not found.")
+		os.Exit(0)
+	}
+
 	// delete credentials
 	models.DeleteCredentials(service, db)
 }

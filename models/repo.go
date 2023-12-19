@@ -131,11 +131,12 @@ func GetCredentials(service string, db *gorm.DB) (string, string) {
 // delete credentials for a service
 func DeleteCredentials(service string, db *gorm.DB) {
 	var credential Credential
-	result := db.Where("service = ?", service).Delete(&credential)
+	result := db.Where("service = ?", service).First(&credential)
 	if result.Error != nil {
 		fmt.Println("Service not found.")
 		os.Exit(0)
 	} else {
+		db.Delete(&credential)
 		fmt.Printf("Deleted credentials for %s.\n", service)
 	}
 }
