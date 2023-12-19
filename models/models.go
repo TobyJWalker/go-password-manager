@@ -13,7 +13,7 @@ type Master struct {
 }
 
 type Credential struct {
-	gorm.Model
+	ID uint `gorm:"primary_key"`
 	Service string
 	Username string
 	Password string

@@ -70,6 +70,13 @@ func main() {
 		} else {
 			app.Remove(args[1], db)
 		}
+
+	case "edit":
+		if len(args) < 2 {
+			fmt.Println("Please specify a service.")
+		} else {
+			app.Edit(args[1], db)
+		}
 	
 	default:
 		fmt.Printf("'%s' is an unrecognised command. See 'go-pwm help' for a list of commands.", args[0])

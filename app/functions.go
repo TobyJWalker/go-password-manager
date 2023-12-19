@@ -156,3 +156,31 @@ func Remove(service string, db *gorm.DB) {
 	// delete credentials
 	models.DeleteCredentials(service, db)
 }
+
+// edit a service
+func Edit(service string, db *gorm.DB) {
+	// check if logged in
+	if !models.CheckSessionValid(db) {
+		fmt.Println("Please login before editing credentials.")
+		os.Exit(0)
+	}
+
+	// check service exists
+	if !models.CheckServiceExists(service, db) {
+		fmt.Println("Service not found.")
+		os.Exit(0)
+	}
+
+	// get username
+	fmt.Print("Enter new username: ")
+	io.Scan()
+	username := io.Text()
+
+	// get password
+	fmt.Print("Enter new password: ")
+	io.Scan()
+	password := io.Text()
+
+	// save credentials
+	models.EditCredentials(service, username, password, db)
+}

@@ -131,11 +131,36 @@ func GetCredentials(service string, db *gorm.DB) (string, string) {
 // delete credentials for a service
 func DeleteCredentials(service string, db *gorm.DB) {
 	var credential Credential
-	err := db.Where("service = ?", service).Delete(&credential).Error
-	if err != nil {
+	result := db.Where("service = ?", service).Delete(&credential)
+	if result.Error != nil {
 		fmt.Println("Service not found.")
 		os.Exit(0)
 	} else {
 		fmt.Printf("Deleted credentials for %s.\n", service)
 	}
+}
+
+// edit credentials
+func EditCredentials(service string, username string, password string, db *gorm.DB) {
+	var credential Credential
+	result := db.Where("service = ?", service).First(&credential)
+	if result.Error != nil {
+		fmt.Println("Service not found.")
+		os.Exit(0)
+	} else {
+		enc_pwd, key, iv := encryptPassword(password)
+		enc_key := base64.StdEncoding.EncodeToString([]byte(key + iv))
+		credential.Username = username
+		credential.Password = enc_pwd
+		credential.Key = enc_key
+		db.Save(&credential)
+	}
+}
+
+// check if service exists
+func CheckServiceExists(service string, db *gorm.DB) bool {
+	var credential Credential
+	if err := db.Where("service = ?", service).First(&credential).Error; err != nil {
+		return false
+	} else {return true}
 }
