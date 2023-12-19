@@ -26,14 +26,17 @@ Build:
 go build -o build/go-pwm
 ```
 
-To install the program so that you can run it from anywhere, you can add the Go install directory to your PATH environment variable. For example, on Linux:
+To install the program so that you can run it from anywhere, you can add the Go install directory to your PATH environment variable.
 
 ```
 # get install directory
 go list -f '{{.Target}}'
 
-# add to PATH
+# add to PATH (Linux/Mac)
 export PATH=$PATH:/path/to/install/directory
+
+# add to PATH (Windows)
+set PATH=%PATH%;C:\path\to\install\directory
 
 # install
 go install
