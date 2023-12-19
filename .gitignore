@@ -22,3 +22,6 @@ go.work
 
 # data folder
 data/
+
+# build folder
+build/
