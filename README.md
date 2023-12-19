@@ -4,14 +4,14 @@ This project is a CLI application which can safely store your login credentials.
 
 # Features
 
-- [ ] Create an password for the app
-- [ ] Verify your identity with the password
-- [ ] Session expiration after 5 minutes (Possibly customisable)
+- [x] Create an password for the app
+- [x] Verify your identity with the password
+- [x] Session expiration after 5 minutes
 - [ ] Add a new login entry
 - [ ] List all login entries
 - [ ] Edit login entry
 - [ ] Delete login entry
-- [ ] Encrypted storage
+- [x] Encrypted storage
 
 # Installation
 
