@@ -144,3 +144,15 @@ func Get(service string, db *gorm.DB) {
 	fmt.Printf("Username: %s\n", uname)
 	fmt.Printf("Password: %s\n", pwd)
 }
+
+// remove a service
+func Remove(service string, db *gorm.DB) {
+	// check if logged in
+	if !models.CheckSessionValid(db) {
+		fmt.Println("Please login before removing credentials.")
+		os.Exit(0)
+	}
+
+	// delete credentials
+	models.DeleteCredentials(service, db)
+}
