@@ -17,10 +17,36 @@ Passwords are hashed for security, and its usage is locked behind a master passw
 - [x] Delete login entry
 - [x] Encrypted storage
 
-# Installation
+# Installing from Source
 
-TBD
+To build the project from source, you will need to have Go installed on your device.
+
+Build:
+```
+go build -o build/go-pwm
+```
+
+To install the program so that you can run it from anywhere, you can add the Go install directory to your PATH environment variable. For example, on Linux:
+
+```
+# get install directory
+go list -f '{{.Target}}'
+
+# add to PATH
+export PATH=$PATH:/path/to/install/directory
+
+# install
+go install
+
+# run
+go-pwm [command]
+```
 
 # Usage
 
-TBD
+```
+go-pwm [command]
+
+# see help for a list of commands
+go-pwm help
+```
