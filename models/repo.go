@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"os"
@@ -21,35 +22,11 @@ func CheckSessionValid(db *gorm.DB) bool {
 	return diff.Minutes() < 5
 }
 
-// check if encryption keys are generated
-func CheckEncryptionKeysExist(db *gorm.DB) bool {
-	key := os.Getenv("GO_PWM_KEY")
-	iv := os.Getenv("GO_PWM_IV")
-	if key == "" || iv == "" {
-		return false
-	} else {return true}
-}
-
 // generate random string with a specified length
 func randomString(length int) string {
     b := make([]byte, length+2)
     rand.Read(b)
     return fmt.Sprintf("%x", b)[2 : length+2]
-}
-
-// generate encryption keys
-func GenerateEncryptionKeys(db *gorm.DB) {
-	key := randomString(32)
-	iv := randomString(16)
-	os.Setenv("GO_PWM_KEY", key)
-	os.Setenv("GO_PWM_IV", iv)
-}
-
-// get encryption keys
-func getEncryptionKeys() (string, string) {
-	key := os.Getenv("GO_PWM_KEY")
-	iv := os.Getenv("GO_PWM_IV")
-	return key, iv
 }
 
 // define padding function
@@ -60,8 +37,9 @@ func PKCS5Padding(ciphertext []byte, blockSize int, after int) []byte {
 }
 
 // encrypt password
-func encryptPassword(password string) string {
-	key, iv := getEncryptionKeys()
+func encryptPassword(password string) (string, string, string) {
+	key := randomString(32)
+	iv := randomString(16)
 	
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
@@ -74,12 +52,20 @@ func encryptPassword(password string) string {
 	mode.CryptBlocks(ciphertext, bPlaintext)
 	str := hex.EncodeToString(ciphertext)
 
-	return str
+	return str, key, iv
 }
 
 // decrypt password
-func decryptPassword(password string) string {
-	key, iv := getEncryptionKeys()
+func decryptPassword(password string, enc_key string) string {
+	
+	decoded_key, err := base64.StdEncoding.DecodeString(enc_key)
+	if err != nil {
+		fmt.Println("Error decoding key.")
+		os.Exit(1)
+	}
+
+	key := string(decoded_key[:32])
+	iv := string(decoded_key[32:])	
 	
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
@@ -87,11 +73,10 @@ func decryptPassword(password string) string {
 	}
 
 	bCiphertext, _ := hex.DecodeString(password)
-	plaintext := make([]byte, len(bCiphertext))
 	mode := cipher.NewCBCDecrypter(block, []byte(iv))
-	mode.CryptBlocks(plaintext, bCiphertext)
+	mode.CryptBlocks([]byte(bCiphertext), []byte(bCiphertext))
 
-	return string(plaintext)
+	return string(bCiphertext)
 }
 
 // check if master password already exists
@@ -116,8 +101,9 @@ func UpdateLoginTime(db *gorm.DB) {
 
 // save credentials
 func SaveCredentials(service string, username string, password string, db *gorm.DB) {
-	enc_pwd := encryptPassword(password)
-	db.Create(&Credential{Service: service, Username: username, Password: enc_pwd})
+	enc_pwd, key, iv := encryptPassword(password)
+	enc_key := base64.StdEncoding.EncodeToString([]byte(key + iv))
+	db.Create(&Credential{Service: service, Username: username, Password: enc_pwd, Key: enc_key})
 }
 
 // get all services
@@ -129,4 +115,15 @@ func GetServices(db *gorm.DB) []string {
 		services = append(services, credential.Service)
 	}
 	return services
+}
+
+// get credentials for a service
+func GetCredentials(service string, db *gorm.DB) (string, string) {
+	var credential Credential
+	err := db.Where("service = ?", service).First(&credential).Error
+	if err != nil {
+		fmt.Println("Service not found.")
+		os.Exit(0)
+	}
+	return credential.Username, decryptPassword(credential.Password, credential.Key)
 }

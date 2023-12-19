@@ -17,4 +17,5 @@ type Credential struct {
 	Service string
 	Username string
 	Password string
+	Key string
 }

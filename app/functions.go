@@ -130,3 +130,17 @@ func List(db *gorm.DB) {
 		fmt.Printf("%d. %s\n", i+1, service)
 	}
 }
+
+// get a services details
+func Get(service string, db *gorm.DB) {
+	// check if logged in
+	if !models.CheckSessionValid(db) {
+		fmt.Println("Please login before getting credentials.")
+		os.Exit(0)
+	}
+
+	// get credentials
+	uname, pwd := models.GetCredentials(service, db)
+	fmt.Printf("Username: %s\n", uname)
+	fmt.Printf("Password: %s\n", pwd)
+}
