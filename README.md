@@ -53,3 +53,16 @@ go-pwm [command]
 # see help for a list of commands
 go-pwm help
 ```
+
+# Running in development mode
+
+The app determines where to save the database based on an environment variable. Please set this evironment variable before running the app if you want to run it in development mode.
+
+```
+export GO_ENV="dev"
+go-pwm [command]
+
+# OR
+
+env GO_ENV="dev" go-pwm [command]
+```

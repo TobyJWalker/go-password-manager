@@ -24,8 +24,23 @@ func main() {
 		os.Mkdir("data", 0755)
 	}
 
+	// determine database location based on OS
+	usr_data_folder, _ := os.UserConfigDir()
+	targetFolder := usr_data_folder + "/go-pwm"
+	if _, err := os.Stat(targetFolder); os.IsNotExist(err) {
+		os.Mkdir(targetFolder, 0755)
+	}
+	targetFile := targetFolder + "/go-pwm.sqlite"
+
+	// overwrite targetfile if development mode
+	if os.Getenv("GO_ENV") == "dev" {
+		targetFile = "data/go-pwm.sqlite"
+	}
+
+	fmt.Println(targetFile)
+
 	// attempt connection to database
-	db, err := gorm.Open(sqlite.Open("data/go-pwm.sqlite"), &gorm.Config{
+	db, err := gorm.Open(sqlite.Open(targetFile), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
