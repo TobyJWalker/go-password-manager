@@ -128,6 +128,17 @@ func GetCredentials(service string, db *gorm.DB) (string, string) {
 	return credential.Username, decryptPassword(credential.Password, credential.Key)
 }
 
+// get entire entry
+func GetEntry(service string, db *gorm.DB) Credential {
+	var credential Credential
+	err := db.Where("service = ?", service).First(&credential).Error
+	if err != nil {
+		fmt.Println("Service not found.")
+		os.Exit(0)
+	}
+	return credential
+}
+
 // delete credentials for a service
 func DeleteCredentials(service string, db *gorm.DB) {
 	var credential Credential
@@ -164,4 +175,9 @@ func CheckServiceExists(service string, db *gorm.DB) bool {
 	if err := db.Where("service = ?", service).First(&credential).Error; err != nil {
 		return false
 	} else {return true}
+}
+
+// import credentials to database
+func ImportCredentials(service string, username string, password string, key string, db *gorm.DB) {
+	db.Create(&Credential{Service: service, Username: username, Password: password, Key: key})
 }
