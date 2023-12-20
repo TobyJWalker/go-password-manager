@@ -37,8 +37,6 @@ func main() {
 		targetFile = "data/go-pwm.sqlite"
 	}
 
-	fmt.Println(targetFile)
-
 	// attempt connection to database
 	db, err := gorm.Open(sqlite.Open(targetFile), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
