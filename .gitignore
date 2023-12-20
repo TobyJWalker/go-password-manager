@@ -25,3 +25,6 @@ data/
 
 # build folder
 build/
+
+# exported data files
+*.data
