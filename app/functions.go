@@ -193,7 +193,7 @@ func Edit(service string, db *gorm.DB) {
 	models.EditCredentials(service, username, password, db)
 }
 
-// export a service as json
+// export a service creds
 func Export(service string, db *gorm.DB) {
 	// check if logged in
 	if !models.CheckSessionValid(db) {
@@ -226,4 +226,46 @@ func Export(service string, db *gorm.DB) {
 	os.WriteFile(newFile, []byte(enc_data), os.ModePerm)
 
 	fmt.Printf("Exported credentials for %s to %s.\n", service, newFile)
+}
+
+// import a service credential from file
+func Import(file string, db *gorm.DB) {
+	// check if logged in
+	if !models.CheckSessionValid(db) {
+		fmt.Println("Please login before importing credentials.")
+		os.Exit(0)
+	}
+
+	// check file exists
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		fmt.Println("File not found.")
+		os.Exit(0)
+	}
+
+	// read file
+	data, err := os.ReadFile(file)
+	if err != nil {
+		fmt.Println("Error reading file.")
+		os.Exit(1)
+	}
+
+	// decode from base64
+	dec_data, err := base64.StdEncoding.DecodeString(string(data))
+	if err != nil {
+		fmt.Println("Error decoding file.")
+		os.Exit(1)
+	}
+
+	// decode from json
+	var cred models.Credential
+	err = json.Unmarshal(dec_data, &cred)
+	if err != nil {
+		fmt.Println("Error decoding file.")
+		os.Exit(1)
+	}
+
+	// save credentials
+	models.ImportCredentials(cred.Service, cred.Username, cred.Password, cred.Key, db)
+
+	fmt.Printf("Imported credentials for %s.\n", cred.Service)
 }

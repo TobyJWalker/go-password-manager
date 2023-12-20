@@ -98,6 +98,13 @@ func main() {
 			app.Export(args[1], db)
 		}
 	
+	case "import":
+		if len(args) < 2 {
+			fmt.Println("Please specify a file to import.")
+		} else {
+			app.Import(args[1], db)
+		}
+
 	default:
 		fmt.Printf("'%s' is an unrecognised command. See 'go-pwm help' for a list of commands.", args[0])
 	}

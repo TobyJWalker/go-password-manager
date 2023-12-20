@@ -176,3 +176,8 @@ func CheckServiceExists(service string, db *gorm.DB) bool {
 		return false
 	} else {return true}
 }
+
+// import credentials to database
+func ImportCredentials(service string, username string, password string, key string, db *gorm.DB) {
+	db.Create(&Credential{Service: service, Username: username, Password: password, Key: key})
+}
