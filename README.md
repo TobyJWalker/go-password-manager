@@ -16,6 +16,7 @@ Passwords are hashed for security, and its usage is locked behind a master passw
 - [x] Edit login entry
 - [x] Delete login entry
 - [x] Encrypted storage
+- [ ] Import/Export credentials
 
 # Installing from Source
 
