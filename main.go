@@ -91,6 +91,13 @@ func main() {
 			app.Edit(args[1], db)
 		}
 	
+	case "export":
+		if len(args) < 2 {
+			fmt.Println("Please specify a service to export.")
+		} else {
+			app.Export(args[1], db)
+		}
+	
 	default:
 		fmt.Printf("'%s' is an unrecognised command. See 'go-pwm help' for a list of commands.", args[0])
 	}

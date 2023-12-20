@@ -128,6 +128,17 @@ func GetCredentials(service string, db *gorm.DB) (string, string) {
 	return credential.Username, decryptPassword(credential.Password, credential.Key)
 }
 
+// get entire entry
+func GetEntry(service string, db *gorm.DB) Credential {
+	var credential Credential
+	err := db.Where("service = ?", service).First(&credential).Error
+	if err != nil {
+		fmt.Println("Service not found.")
+		os.Exit(0)
+	}
+	return credential
+}
+
 // delete credentials for a service
 func DeleteCredentials(service string, db *gorm.DB) {
 	var credential Credential
