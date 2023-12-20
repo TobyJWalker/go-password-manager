@@ -35,11 +35,13 @@ Commands:
   help           : display help message
   configure      : setup master password
   login          : login to go-pwm
-  add [label]  : add credentials for new service
+  add [label]    : add credentials for new service
   list           : list all services
-  get [label]  : get credentials for the service
-  edit [label] : edit credentials for a service
-  rm [label]   : remove a service
+  get [label]    : get credentials for the service
+  edit [label]   : edit credentials for a service
+  rm [label]     : remove a service
+  export [label] : export credentials for a service
+  import [file]  : import credentials from a file
     `)
 }
 
